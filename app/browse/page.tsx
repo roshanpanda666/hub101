@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import ResourceCard from "@/components/ResourceCard";
 import { getResources } from "@/actions/resources";
 
-const branches = ["CSE", "ABM", "BI"];
+const branches = ["CSA", "ABM", "BI"];
 const semesters = [1, 2, 3, 4, 5, 6, 7, 8];
 const types = [
   { value: "", label: "All" },
@@ -64,7 +64,7 @@ function BrowseContent() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 12, marginBottom: 24 }}>
           {branches.map((b) => (
             <button key={b} onClick={() => setBranch(b)} className="glass-card" style={{ padding: 20, cursor: "pointer", textAlign: "center", border: "1px solid var(--card-border)", background: "var(--card-bg)" }}>
-              <div style={{ fontSize: 32, marginBottom: 8 }}>{b === "CSE" ? "💻" : b === "ABM" ? "🌾" : "📊"}</div>
+              <div style={{ fontSize: 32, marginBottom: 8 }}>{b === "CSA" ? "💻" : b === "ABM" ? "🌾" : "📊"}</div>
               <div style={{ fontWeight: 700, fontSize: 18, color: "var(--foreground)" }}>{b}</div>
             </button>
           ))}

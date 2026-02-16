@@ -1,36 +1,102 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎓 Smart Campus Hub (CPGS)
 
-## Getting Started
+> **Empowering Students with Intelligence & Resources.**
+> A modern, AI-integrated platform for managing campus resources, routines, and student interactions.
 
-First, run the development server:
+![Next.js](https://img.shields.io/badge/Next.js-15-black) ![React](https://img.shields.io/badge/React-19-blue) ![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38bdf8) ![MongoDB](https://img.shields.io/badge/MongoDB-Database-green)
+
+---
+
+## 🌟 Key Features
+
+- **🔐 Robust Authentication**: Secure login/signup system with role-based access (Student, Admin, Developer, CR, HOD).
+- **🤖 AI Integration**: Built-in **Gemini AI** assistant for answering queries and analyzing uploaded content.
+- **📚 Resource Hub**: Upload, browse, and manage study materials categorized by branch (CSE, ABM, BI).
+- **📅 Routine Management**: Dynamic class routine viewer and creator.
+- **🎨 Modern UI/UX**: Fully responsive design with **Dark/Light mode** toggle and glassmorphism aesthetics.
+- **🛡️ Admin Dashboard**: Dedicated panel for managing users and resources.
+
+## 🛠️ Tech Stack
+
+- **Framework**: [Next.js 15](https://nextjs.org/) (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **Database**: MongoDB (Mongoose ODM)
+- **Authentication**: JWT & Bcrypt
+- **AI Model**: Google Generative AI (Gemini)
+
+## 🚀 Getting Started
+
+Follow these steps to set up the project locally.
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/your-username/cpgs-hub.git
+cd cpgs-hub/hub101
+```
+
+### 2. Install Dependencies
+
+```bash
+npm install
+# or
+yarn install
+```
+
+### 3. Environment Configuration
+
+Create a `.env.local` file in the root directory (`hub101/`) and add the following variables:
+
+```env
+# MongoDB Connection String
+CONNECTIONURI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/?appName=<appname>
+
+# Google Gemini API Key
+GEMINI_KEY=your_gemini_api_key_here
+
+# JWT Secret for Authentication
+JWT_SECRET=your_secure_jwt_secret
+```
+
+### 4. Run the Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📂 Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+hub101/
+├── app/                # Application routes (Next.js App Router)
+│   ├── api/            # API routes (Auth, Admin, Upload, Chat)
+│   ├── admin/          # Admin dashboard pages
+│   ├── (auth)/         # Auth pages (Login, Register)
+│   ├── browse/         # Resource browsing
+│   └── ...
+├── components/         # Reusable UI components
+├── lib/                # Utility functions (dbConnect, generic utils)
+├── models/             # Mongoose database models (User, File, etc.)
+├── context/            # React Context (AuthContext)
+└── public/             # Static assets
+```
 
-## Learn More
+## 🤝 Contributing
 
-To learn more about Next.js, take a look at the following resources:
+Contributions are welcome! Please follow these steps:
+1. Fork the project.
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`).
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`).
+4. Push to the branch (`git push origin feature/AmazingFeature`).
+5. Open a Pull Request.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📄 License
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Distributed under the MIT License. See `LICENSE` for more information.
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Made with ❤️ by **Sabyasachi Panda**

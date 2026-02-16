@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
                     : "No resources uploaded yet.";
 
                 const genAI = new GoogleGenerativeAI(GEMINI_KEY);
-                const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+                const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
                 // Fetch dynamic prompt
                 let systemInstruction = `You are Campus Hub AI, an academic assistant for university students. You help with questions about syllabi, exams, routines, and general academic queries. Be concise and helpful.`;
@@ -96,9 +96,9 @@ Answer concisely:`;
                 const text = response.text();
 
                 return NextResponse.json({ reply: text });
-            } catch (aiError) {
+            } catch (aiError: any) {
                 console.error("Gemini error:", aiError);
-                // Fall through to placeholder
+                return NextResponse.json({ reply: `(Debug) Gemini Error: ${aiError.message}` });
             }
         }
 
@@ -106,8 +106,8 @@ Answer concisely:`;
         return NextResponse.json({
             reply: "🤖 I'm the Campus Hub AI! I can help with class routines and exam schedules. Try asking:\n\n• \"What's the routine for CSE-1 semester 5?\"\n• \"When are the semester 5 exams?\"\n\n_Full AI-powered answers are available when the Gemini API is configured._",
         });
-    } catch (error) {
+    } catch (error: any) {
         console.error("Chat error:", error);
-        return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
+        return NextResponse.json({ error: `Server Error: ${error.message}` }, { status: 500 });
     }
 }

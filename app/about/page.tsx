@@ -66,6 +66,26 @@ export default function AboutPage() {
           ))}
         </div>
       </div>
+
+      {/* Open Source */}
+      <div className="glass-card animate-in" style={{ padding: 28, marginTop: 24, animationDelay: "0.4s", textAlign: "center" }}>
+        <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 12, color: "var(--foreground)" }}>
+          ❤️ Open Source
+        </h3>
+        <p style={{ color: "var(--text-muted)", fontSize: 14, lineHeight: 1.6, marginBottom: 20 }}>
+          This project is proudly open source! We believe in transparency and collaboration. 
+          Feel free to explore the code, report issues, or contribute to making campus life better.
+        </p>
+        <a 
+          href="https://github.com/roshanpanda666/hub101" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="btn-secondary"
+          style={{ textDecoration: "none", padding: "10px 24px", fontSize: 14, display: "inline-flex", alignItems: "center", gap: 8 }}
+        >
+          <span style={{ fontSize: 18 }}>🐙</span> Star on GitHub
+        </a>
+      </div>
     </div>
   );
 }
