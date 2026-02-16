@@ -15,6 +15,12 @@ export async function getRoutine(section?: string, semester?: number) {
     return JSON.parse(JSON.stringify(routines));
 }
 
+export async function getAllRoutines() {
+    await dbConnect();
+    const routines = await Routine.find().sort({ semester: 1, section: 1 }).lean();
+    return JSON.parse(JSON.stringify(routines));
+}
+
 export async function createRoutine(data: {
     section: string;
     semester: number;
@@ -22,6 +28,13 @@ export async function createRoutine(data: {
 }) {
     await dbConnect();
     await Routine.create(data);
+    revalidatePath("/routine");
+    return { success: true };
+}
+
+export async function deleteRoutine(id: string) {
+    await dbConnect();
+    await Routine.findByIdAndDelete(id);
     revalidatePath("/routine");
     return { success: true };
 }
