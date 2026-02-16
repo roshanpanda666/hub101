@@ -10,7 +10,7 @@ interface Message {
 export default function ChatBubble() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
-    { role: "assistant", content: "Hi! 👋 I'm the Campus Hub AI. Ask me about routines, exams, or anything academic!" },
+    { role: "assistant", content: "Hi! 👋 I'm the CPGS Hub AI. Ask me about routines, exams, or anything academic!" },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -73,7 +73,7 @@ export default function ChatBubble() {
           <div style={{ padding: "16px 20px", borderBottom: "1px solid var(--card-border)", display: "flex", alignItems: "center", gap: 10 }}>
             <span style={{ fontSize: 22 }}>🤖</span>
             <div>
-              <div style={{ fontWeight: 700, fontSize: 15, color: "var(--foreground)" }}>Campus AI</div>
+              <div style={{ fontWeight: 700, fontSize: 15, color: "var(--foreground)" }}>CPGS Hub AI</div>
               <div style={{ fontSize: 11, color: "var(--accent-light)" }}>Powered by Gemini</div>
             </div>
           </div>

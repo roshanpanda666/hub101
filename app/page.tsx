@@ -10,9 +10,9 @@ const features = [
 ];
 
 const branches = [
-  { code: "CSE", name: "Computer Science & Engineering", icon: "💻", color: "#6c63ff" },
+  { code: "CSA", name: "Computer Science & Application", icon: "💻", color: "#6c63ff" },
   { code: "ABM", name: "Agri-Business Management", icon: "🌾", color: "#10b981" },
-  { code: "BI", name: "Business Intelligence", icon: "📊", color: "#f59e0b" },
+  { code: "Bio Informatics", name: "Bio Informatics", icon: "📊", color: "#f59e0b" },
 ];
 
 export default function HomePage() {
@@ -24,7 +24,7 @@ export default function HomePage() {
           <div className="animate-in" style={{ animationDelay: "0.1s" }}>
             <div style={{ fontSize: 64, marginBottom: 16 }}>🎓</div>
             <h1 style={{ fontSize: "clamp(2rem, 5vw, 3.4rem)", fontWeight: 800, lineHeight: 1.15, marginBottom: 20 }}>
-              Your <span className="gradient-text">Smart Campus</span><br />Hub
+              Your <span className="gradient-text">CPGS Hub</span>
             </h1>
             <p style={{ fontSize: 18, color: "var(--text-muted)", maxWidth: 560, margin: "0 auto 32px", lineHeight: 1.7 }}>
               One stop for syllabi, exam schedules, PYQs, routines, and an AI-powered academic assistant. Built by students, for students.

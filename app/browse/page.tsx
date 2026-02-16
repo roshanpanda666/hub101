@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import ResourceCard from "@/components/ResourceCard";
 import { getResources } from "@/actions/resources";
 
-const branches = ["CSA", "ABM", "BI"];
+const branches = ["CSA", "ABM", "Bio Informatics"];
 const semesters = [1, 2, 3, 4, 5, 6, 7, 8];
 const types = [
   { value: "", label: "All" },

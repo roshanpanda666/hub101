@@ -1,7 +1,7 @@
-# 🎓 Smart Campus Hub (CPGS)
+# 🎓 CPGS Hub
 
 > **Empowering Students with Intelligence & Resources.**
-> A modern, AI-integrated platform for managing campus resources, routines, and student interactions.
+> A modern, AI-integrated platform for managing campus resources, routines, and student interactions for CPGS.
 
 ![Next.js](https://img.shields.io/badge/Next.js-15-black) ![React](https://img.shields.io/badge/React-19-blue) ![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38bdf8) ![MongoDB](https://img.shields.io/badge/MongoDB-Database-green)
 

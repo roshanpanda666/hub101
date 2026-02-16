@@ -5,7 +5,7 @@ import { useAuth } from "@/context/AuthContext";
 import { createRoutine } from "@/actions/routines";
 import Link from "next/link";
 
-const sections = ["CSE-1", "CSE-2", "CSE-3", "ABM-1", "ABM-2", "BI-1", "BI-2"];
+const sections = ["CSA-1", "CSA-2", "CSA-3", "ABM-1", "ABM-2", "Bio Informatics-1", "Bio Informatics-2"];
 const semesters = [1, 2, 3, 4, 5, 6, 7, 8];
 const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 

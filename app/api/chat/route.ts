@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
                 const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
                 // Fetch dynamic prompt
-                let systemInstruction = `You are Campus Hub AI, an academic assistant for university students. You help with questions about syllabi, exams, routines, and general academic queries. Be concise and helpful.`;
+                let systemInstruction = `You are CPGS Hub AI, an academic assistant for university students. You help with questions about syllabi, exams, routines, and general academic queries. Be concise and helpful.`;
 
                 try {
                     const SystemConfig = (await import("@/models/SystemConfig")).default;
@@ -104,7 +104,7 @@ Answer concisely:`;
 
         // --- Fallback ---
         return NextResponse.json({
-            reply: "🤖 I'm the Campus Hub AI! I can help with class routines and exam schedules. Try asking:\n\n• \"What's the routine for CSE-1 semester 5?\"\n• \"When are the semester 5 exams?\"\n\n_Full AI-powered answers are available when the Gemini API is configured._",
+            reply: "🤖 I'm the CPGS Hub AI! I can help with class routines and exam schedules. Try asking:\n\n• \"What's the routine for CSA-1 semester 5?\"\n• \"When are the semester 5 exams?\"\n\n_Full AI-powered answers are available when the Gemini API is configured._",
         });
     } catch (error: any) {
         console.error("Chat error:", error);

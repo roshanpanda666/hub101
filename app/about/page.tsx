@@ -25,7 +25,7 @@ export default function AboutPage() {
 
         <p style={{ color: "var(--text-muted)", lineHeight: 1.8, maxWidth: 500, margin: "0 auto 28px", fontSize: 15 }}>
           Passionate about building tools that make student life easier. 
-          Smart Campus Hub was built to centralize academic resources and 
+          CPGS Hub was built to centralize academic resources and 
           bring the power of AI to everyday campus needs.
         </p>
 

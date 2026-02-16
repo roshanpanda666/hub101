@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Smart Campus Hub | Your Academic Companion",
+  title: "CPGS Hub | Your Academic Companion",
   description:
     "Access syllabi, exam schedules, PYQs, routines, and an AI-powered academic assistant — all in one place.",
 };

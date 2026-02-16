@@ -27,7 +27,7 @@ export default function Navbar() {
         {/* Logo */}
         <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
           <span style={{ fontSize: 28 }}>🎓</span>
-          <span className="gradient-text" style={{ fontSize: 20, fontWeight: 700 }}>Campus Hub</span>
+          <span className="gradient-text" style={{ fontSize: 20, fontWeight: 700 }}>CPGS Hub</span>
         </Link>
 
         {/* Desktop Links */}

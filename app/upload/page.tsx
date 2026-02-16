@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
 
-const branches = ["CSE", "ABM", "BI"];
+const branches = ["CSA", "ABM", "Bio Informatics"];
 const semesters = [1, 2, 3, 4, 5, 6, 7, 8];
 const resourceTypes = [
   { value: "syllabus", label: "📘 Syllabus" },
