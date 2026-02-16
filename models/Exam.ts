@@ -10,6 +10,7 @@ export interface IExam extends Document {
     venue?: string;
     isNotice?: boolean;
     imageUrl?: string;
+    createdBy?: string;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -29,6 +30,7 @@ const ExamSchema = new Schema<IExam>(
         venue: { type: String },
         isNotice: { type: Boolean, default: false },
         imageUrl: { type: String },
+        createdBy: { type: String }, // Store User ID
     },
     { timestamps: true }
 );

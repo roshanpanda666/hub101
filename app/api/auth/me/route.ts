@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
         }
 
         return NextResponse.json({
-            user: { _id: user._id, name: user.name, email: user.email },
+            user: { _id: user._id, name: user.name, email: user.email, role: user.role },
         });
     } catch {
         return NextResponse.json({ error: "Not authenticated" }, { status: 401 });

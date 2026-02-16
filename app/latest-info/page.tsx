@@ -15,6 +15,7 @@ interface IAnnouncement {
   content: string;
   attachments: IAttachment[];
   author: string;
+  createdBy?: string;
   createdAt: string;
 }
 
@@ -158,7 +159,7 @@ export default function LatestInfoPage() {
                 <div style={{ textAlign: "right" }}>
                   <div style={{ fontSize: 12, color: "var(--text-muted)" }}>{new Date(post.createdAt).toLocaleDateString("en-IN", { dateStyle: "medium" })}</div>
                   <div style={{ fontSize: 12, color: "var(--accent)", fontWeight: 600 }}>{post.author}</div>
-                  {user && (
+                  {user && (user._id === post.createdBy || user.role === "admin") && (
                     <button 
                         onClick={async () => {
                             if (confirm("Delete this announcement?")) {
