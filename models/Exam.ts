@@ -5,6 +5,11 @@ export interface IExam extends Document {
     subject: string;
     date: Date;
     type: "Mid-Sem" | "End-Sem";
+    branch: string;
+    time?: string;
+    venue?: string;
+    isNotice?: boolean;
+    imageUrl?: string;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -19,6 +24,11 @@ const ExamSchema = new Schema<IExam>(
             enum: ["Mid-Sem", "End-Sem"],
             required: true,
         },
+        branch: { type: String, required: true },
+        time: { type: String },
+        venue: { type: String },
+        isNotice: { type: Boolean, default: false },
+        imageUrl: { type: String },
     },
     { timestamps: true }
 );
