@@ -39,7 +39,7 @@ export async function createExam(data: {
     // Get current user from token
     const cookieStore = await cookies();
     const token = cookieStore.get("token")?.value;
-    let createdBy = null;
+    let createdBy: string | undefined;
 
     if (token) {
         try {
@@ -50,7 +50,11 @@ export async function createExam(data: {
         }
     }
 
-    await Exam.create({ ...data, createdBy });
+    if (createdBy) {
+        await Exam.create({ ...data, createdBy });
+    } else {
+        await Exam.create(data);
+    }
     revalidatePath("/exams");
     return { success: true };
 }
