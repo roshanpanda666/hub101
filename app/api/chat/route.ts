@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
                 const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
                 // Fetch dynamic prompt
-                let systemInstruction = `You are CPGS Hub AI, an academic assistant for university students. You help with questions about syllabi, exams, routines, and general academic queries. Be concise and helpful.`;
+                let systemInstruction = `You are CPGS Hub AI, an academic assistant for university students. You help with questions about syllabi, exams, routines, and general academic queries. Be concise and helpful. if user asks something and that is not in the syllabus then you can fetch that from the internert`;
 
                 try {
                     const SystemConfig = (await import("@/models/SystemConfig")).default;

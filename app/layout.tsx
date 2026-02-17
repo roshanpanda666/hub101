@@ -5,6 +5,8 @@ import Navbar from "@/components/Navbar";
 import ChatBubble from "@/components/ChatBubble";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { AuthProvider } from "@/context/AuthContext";
+import dbConnect from "@/lib/dbConnect";
+import SystemConfig from "@/models/SystemConfig";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,14 +24,39 @@ export const metadata: Metadata = {
     "Access syllabi, exam schedules, PYQs, routines, and an AI-powered academic assistant — all in one place.",
 };
 
-export default function RootLayout({
+async function getThemeConfig() {
+  try {
+    await dbConnect();
+    const config = await SystemConfig.findOne({ key: "theme_config" });
+    if (config && config.value) {
+      return JSON.parse(config.value);
+    }
+  } catch (error) {
+    console.error("Failed to fetch theme config:", error);
+  }
+  return null;
+}
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const themeConfig = await getThemeConfig();
+
+  let dynamicStyle = "";
+  if (themeConfig) {
+      dynamicStyle = `
+        :root {
+            ${Object.entries(themeConfig).map(([key, val]) => `${key}: ${val} !important;`).join("\n")}
+        }
+      `;
+  }
+
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        {dynamicStyle && <style dangerouslySetInnerHTML={{ __html: dynamicStyle }} />}
         <ThemeProvider>
           <AuthProvider>
             <Navbar />

@@ -29,12 +29,36 @@ export default function AboutPage() {
           bring the power of AI to everyday campus needs.
         </p>
 
-        <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+          
+        <form 
+            action="mailto:sabyasachipanda410@gmail.com"
+            method="post"
+            encType="text/plain"
+            style={{ display: "flex", flexDirection: "column", gap: 12, textAlign: "left", marginTop: 20 }}
+        >
+            <div>
+                <label style={{ fontSize: 13, fontWeight: 600, color: "var(--text-muted)", marginBottom: 4, display: "block" }}>Your Email</label>
+                <input type="email" name="user_email" placeholder="you@example.com" className="input-field" required />
+            </div>
+            <div>
+                <label style={{ fontSize: 13, fontWeight: 600, color: "var(--text-muted)", marginBottom: 4, display: "block" }}>Query / Feedback</label>
+                <textarea name="message" rows={3} placeholder="How can I help you?" className="input-field" required></textarea>
+            </div>
+            <button type="submit" className="btn-primary" style={{ width: "100%", justifyContent: "center" }}>
+                📩 Send Query to Developer
+            </button>
+        </form>
+
+        <div style={{ marginTop: 24, fontSize: 14, color: "var(--text-muted)" }}>
+            Or email directly: <a href="mailto:sabyasachipanda410@gmail.com" style={{ color: "var(--accent)" }}>sabyasachipanda410@gmail.com</a>
+        </div>
+
+        <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", marginTop: 24 }}>
           <a
             href="https://connect-card-of-roshan.vercel.app"
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-primary"
+            className="btn-secondary"
             style={{ textDecoration: "none", padding: "12px 28px", fontSize: 15, display: "flex", alignItems: "center", gap: 8 }}
           >
             🔗 Connect with Me

@@ -26,9 +26,11 @@ export default function Navbar() {
     <nav style={{ position: "sticky", top: 0, zIndex: 50, background: "var(--nav-bg)", backdropFilter: "blur(20px)", borderBottom: "1px solid var(--card-border)", transition: "background 0.3s ease" }}>
       <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px", display: "flex", alignItems: "center", justifyContent: "space-between", height: 64 }}>
         {/* Logo */}
-        <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
-          <span style={{ fontSize: 28 }}>🎓</span>
-          <span className="gradient-text" style={{ fontSize: 20, fontWeight: 700 }}>CPGS Hub</span>
+        <Link href="/" style={{ display: "flex", alignItems: "center", gap: 12, textDecoration: "none" }}>
+          <div style={{ width: 45, height: 45, display: "flex", alignItems: "center", justifyContent: "center" }}>
+             <img src="/logo.png" alt="CPGS Hub Logo" style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }} />
+          </div>
+          <span className="gradient-text" style={{ fontSize: 22, fontWeight: 700, letterSpacing: "-0.5px" }}>CPGS Hub</span>
         </Link>
 
         {/* Desktop Links */}
