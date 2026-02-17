@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getPendingResources, approveResource, deleteResource } from "@/actions/resources";
+import { getPendingResources, getResources, approveResource, deleteResource } from "@/actions/resources";
 import { getExams, deleteExam } from "@/actions/exams";
 import { getAllRoutines, deleteRoutine } from "@/actions/routines";
 
@@ -13,6 +13,7 @@ interface PendingResource {
   subject_name: string;
   file_name: string;
   uploaded_by?: string;
+  createdAt?: string;
 }
 
 interface Announcement {
@@ -46,9 +47,10 @@ interface User {
 }
 
 export default function AdminPage() {
-  const [activeTab, setActiveTab] = useState<"pending" | "announcements" | "exams" | "routines" | "users" | "settings">("pending");
+  const [activeTab, setActiveTab] = useState<"pending" | "approved" | "announcements" | "exams" | "routines" | "users" | "config">("pending");
   
   const [pending, setPending] = useState<PendingResource[]>([]);
+  const [approved, setApproved] = useState<PendingResource[]>([]);
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [exams, setExams] = useState<Exam[]>([]);
   const [routines, setRoutines] = useState<Routine[]>([]);
@@ -56,6 +58,7 @@ export default function AdminPage() {
   const [aiPrompt, setAiPrompt] = useState("");
   
   const [loading, setLoading] = useState(true);
+  const [savingConfig, setSavingConfig] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -68,6 +71,9 @@ export default function AdminPage() {
         if (activeTab === "pending") {
             const data = await getPendingResources();
             setPending(data);
+        } else if (activeTab === "approved") {
+            const data = await getResources({ approvedOnly: true });
+            setApproved(data);
         } else if (activeTab === "announcements") {
             const res = await fetch("/api/announcements");
             if (res.ok) setAnnouncements(await res.json());
@@ -79,12 +85,16 @@ export default function AdminPage() {
             setRoutines(data);
         } else if (activeTab === "users") {
             const res = await fetch("/api/admin/users");
-            const data = await res.json();
-            if (data.success) setUsers(data.users);
-        } else if (activeTab === "settings") {
+            if (res.ok) {
+                const data = await res.json();
+                setUsers(data.users || []);
+            }
+        } else if (activeTab === "config") {
             const res = await fetch("/api/admin/config?key=ai_prompt");
-            const data = await res.json();
-            if (data.success && data.value) setAiPrompt(data.value);
+            if (res.ok) {
+                 const data = await res.json();
+                 setAiPrompt(data.value || "");
+            }
         }
     } catch (err) {
         console.error(err);
@@ -101,10 +111,14 @@ export default function AdminPage() {
     setPending(prev => prev.filter(r => r._id !== id));
   }
 
-  async function handleDeleteResource(id: string) {
+  async function handleDeleteResource(id: string, isPending: boolean) {
     if (!confirm("Delete this upload?")) return;
     await deleteResource(id);
-    setPending(prev => prev.filter(r => r._id !== id));
+    if (isPending) {
+        setPending(prev => prev.filter(r => r._id !== id));
+    } else {
+        setApproved(prev => prev.filter(r => r._id !== id));
+    }
   }
 
   async function handleDeleteAnnouncement(id: string) {
@@ -125,46 +139,61 @@ export default function AdminPage() {
     setRoutines(prev => prev.filter(r => r._id !== id));
   }
 
-  async function handleDeleteUser(id: string) {
-      if (!confirm("Are you sure you want to delete this user?")) return;
-      await fetch(`/api/admin/users?id=${id}`, { method: "DELETE" });
-      setUsers(prev => prev.filter(u => u._id !== id));
-  }
-
-  async function handleUpdateUserRole(id: string, newRole: string) {
-      await fetch(`/api/admin/users`, {
+  async function handleUpdateUserRole(userId: string, newRole: string) {
+      if (!confirm(`Change role to ${newRole}?`)) return;
+      const res = await fetch("/api/admin/users", {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId: id, role: newRole }),
+          body: JSON.stringify({ userId, role: newRole })
       });
-      fetchData(); // Refresh to ensure sync
+      if (res.ok) {
+          setUsers(prev => prev.map(u => u._id === userId ? { ...u, role: newRole } : u));
+      } else {
+          alert("Failed to update role");
+      }
   }
 
-  async function handleSaveAiPrompt() {
-      await fetch(`/api/admin/config`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ key: "ai_prompt", value: aiPrompt }),
-      });
-      alert("AI Prompt updated!");
+  async function handleDeleteUser(userId: string) {
+      if (!confirm("Permanently delete this user?")) return;
+      const res = await fetch(`/api/admin/users?id=${userId}`, { method: "DELETE" });
+      if (res.ok) setUsers(prev => prev.filter(u => u._id !== userId));
+      else alert("Failed to delete user");
+  }
+
+  async function handleSaveConfig() {
+      setSavingConfig(true);
+      try {
+          const res = await fetch("/api/admin/config", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ key: "ai_prompt", value: aiPrompt })
+          });
+          if (res.ok) alert("System prompt saved!");
+          else alert("Failed to save");
+      } catch {
+          alert("Error saving config");
+      } finally {
+          setSavingConfig(false);
+      }
   }
 
   return (
     <div style={{ maxWidth: 1000, margin: "0 auto", padding: "40px 24px" }}>
       <div className="animate-in" style={{ marginBottom: 32 }}>
         <h1 style={{ fontSize: 28, fontWeight: 800, marginBottom: 8 }}>⚙️ <span className="gradient-text">Admin Panel</span></h1>
-        <p style={{ color: "var(--text-muted)" }}>Centralized control for all system resources.</p>
+        <p style={{ color: "var(--text-muted)" }}>Full control over content, users, and configuration.</p>
       </div>
 
       {/* Tabs */}
       <div style={{ display: "flex", gap: 8, marginBottom: 24, flexWrap: "wrap" }}>
         {[
             { id: "pending", label: "⏳ Pending" },
-            { id: "announcements", label: "📢 Info" },
+            { id: "approved", label: "✅ Approved" },
+            { id: "announcements", label: "📢 Latest Info" },
             { id: "exams", label: "📝 Exams" },
             { id: "routines", label: "📅 Routines" },
             { id: "users", label: "👥 Users" },
-            { id: "settings", label: "🤖 AI Settings" }
+            { id: "config", label: "🤖 AI Brain" }
         ].map(tab => (
             <button
                 key={tab.id}
@@ -175,8 +204,7 @@ export default function AdminPage() {
                     borderRadius: 8, 
                     background: activeTab === tab.id ? "var(--primary)" : "transparent",
                     color: activeTab === tab.id ? "white" : "var(--text-muted)",
-                    fontWeight: 600,
-                    fontSize: 14
+                    fontWeight: 600
                 }}
             >
                 {tab.label}
@@ -195,7 +223,7 @@ export default function AdminPage() {
                 pending.map((r) => (
                     <div key={r._id} className="glass-card animate-in" style={{ padding: 20 }}>
                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
-                            <div>
+                            <div style={{ flex: 1 }}>
                                 <div style={{ fontWeight: 700 }}>{r.subject_name}</div>
                                 <div style={{ fontSize: 13, color: "var(--text-muted)" }}>{r.branch} • Sem {r.semester} • {r.type}</div>
                                 <div style={{ fontSize: 12, color: "var(--accent)" }}>👤 {r.uploaded_by || "Unknown"}</div>
@@ -203,7 +231,27 @@ export default function AdminPage() {
                             <div style={{ display: "flex", gap: 8 }}>
                                 <a href={`/api/file/${r._id}`} target="_blank" className="btn-ghost" style={{ padding: "6px 12px" }}>View</a>
                                 <button onClick={() => handleApproveResource(r._id)} className="btn-success" style={{ padding: "6px 12px" }}>Approve</button>
-                                <button onClick={() => handleDeleteResource(r._id)} className="btn-danger" style={{ padding: "6px 12px" }}>Delete</button>
+                                <button onClick={() => handleDeleteResource(r._id, true)} className="btn-danger" style={{ padding: "6px 12px" }}>Delete</button>
+                            </div>
+                         </div>
+                    </div>
+                ))
+            )}
+
+            {/* Approved / Past Requests Tab */}
+            {activeTab === "approved" && (
+                approved.length === 0 ? <EmptyState msg="No approved resources." /> :
+                approved.map((r) => (
+                    <div key={r._id} className="glass-card animate-in" style={{ padding: 20 }}>
+                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
+                            <div style={{ flex: 1 }}>
+                                <div style={{ fontWeight: 700 }}>{r.subject_name}</div>
+                                <div style={{ fontSize: 13, color: "var(--text-muted)" }}>{r.branch} • Sem {r.semester} • {r.type}</div>
+                                <div style={{ fontSize: 12, color: "var(--text-muted)" }}>Uploaded by: {r.uploaded_by || "Unknown"}</div>
+                            </div>
+                            <div style={{ display: "flex", gap: 8 }}>
+                                <a href={`/api/file/${r._id}`} target="_blank" className="btn-ghost" style={{ padding: "6px 12px" }}>View</a>
+                                <button onClick={() => handleDeleteResource(r._id, false)} className="btn-danger" style={{ padding: "6px 12px" }}>Delete</button>
                             </div>
                          </div>
                     </div>
@@ -259,61 +307,61 @@ export default function AdminPage() {
 
             {/* Users Tab */}
             {activeTab === "users" && (
-                <div className="glass-card" style={{ padding: 20 }}>
-                    <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 16 }}>Manage Users</h3>
-                    <div style={{ overflowX: "auto" }}>
-                        <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                            <thead>
-                                <tr style={{ borderBottom: "1px solid var(--card-border)", color: "var(--text-muted)", fontSize: 14 }}>
-                                    <th style={{ padding: 12, textAlign: "left" }}>Name</th>
-                                    <th style={{ padding: 12, textAlign: "left" }}>Email</th>
-                                    <th style={{ padding: 12, textAlign: "left" }}>Role</th>
-                                    <th style={{ padding: 12, textAlign: "left" }}>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {users.map(u => (
-                                    <tr key={u._id} style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
-                                        <td style={{ padding: 12 }}>{u.name}</td>
-                                        <td style={{ padding: 12, color: "var(--text-muted)" }}>{u.email}</td>
-                                        <td style={{ padding: 12 }}>
-                                            <select 
-                                                value={u.role} 
-                                                onChange={(e) => handleUpdateUserRole(u._id, e.target.value)}
-                                                className="input-field"
-                                                style={{ padding: "4px 8px", fontSize: 13 }}
-                                            >
-                                                {["user", "admin", "developer", "cr", "hod"].map(r => (
-                                                    <option key={r} value={r}>{r}</option>
-                                                ))}
-                                            </select>
-                                        </td>
-                                        <td style={{ padding: 12 }}>
-                                            <button onClick={() => handleDeleteUser(u._id)} className="btn-ghost" style={{ color: "#ef4444", fontSize: 13 }}>Delete</button>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                 users.length === 0 ? <EmptyState msg="No users found." /> :
+                 users.map((u) => (
+                     <div key={u._id} className="glass-card animate-in" style={{ padding: 20 }}>
+                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+                             <div>
+                                 <div style={{ fontWeight: 700 }}>{u.name}</div>
+                                 <div style={{ fontSize: 13, color: "var(--text-muted)" }}>{u.email}</div>
+                             </div>
+                             <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                                 <select 
+                                     value={u.role} 
+                                     onChange={(e) => handleUpdateUserRole(u._id, e.target.value)}
+                                     className="input-field" 
+                                     style={{ padding: "4px 8px", fontSize: 13 }}
+                                 >
+                                     <option value="user">User</option>
+                                     <option value="cr">CR</option>
+                                     <option value="hod">HOD</option>
+                                     <option value="developer">Developer</option>
+                                     <option value="admin">Admin</option>
+                                 </select>
+                                 <button onClick={() => handleDeleteUser(u._id)} className="btn-ghost" style={{ padding: "6px 8px", color: "#ef4444" }} title="Delete User">🗑️</button>
+                             </div>
+                         </div>
+                     </div>
+                 ))
+            )}
+
+            {/* AI Config Tab */}
+            {activeTab === "config" && (
+                <div className="glass-card animate-in" style={{ padding: 24 }}>
+                    <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 12 }}>🤖 AI System Prompt</h3>
+                    <p style={{ fontSize: 13, color: "var(--text-muted)", marginBottom: 16 }}>
+                        Customize how the AI assistant behaves and what personality it adopts.
+                    </p>
+                    <textarea 
+                        value={aiPrompt}
+                        onChange={(e) => setAiPrompt(e.target.value)}
+                        className="input-field"
+                        rows={10}
+                        style={{ fontFamily: "monospace", fontSize: 13, lineHeight: 1.5, marginBottom: 16 }}
+                        placeholder="You are a helpful assistant..."
+                    />
+                    <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                        <button 
+                            onClick={handleSaveConfig} 
+                            className="btn-primary" 
+                            disabled={savingConfig}
+                        >
+                            {savingConfig ? "Saving..." : "Save Configuration"}
+                        </button>
                     </div>
                 </div>
             )}
 
-            {/* AI Settings Tab */}
-            {activeTab === "settings" && (
-                <div className="glass-card" style={{ padding: 24 }}>
-                    <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 16 }}>AI System Prompt</h3>
-                    <p style={{ fontSize: 14, color: "var(--text-muted)", marginBottom: 12 }}>Define how the AI assistant behaves.</p>
-                    <textarea 
-                        className="input-field" 
-                        value={aiPrompt} 
-                        onChange={(e) => setAiPrompt(e.target.value)} 
-                        rows={10} 
-                        style={{ width: "100%", resize: "vertical", fontFamily: "monospace", fontSize: 13 }} 
-                    />
-                    <button onClick={handleSaveAiPrompt} className="btn-primary" style={{ marginTop: 16 }}>Save Configuration</button>
-                </div>
-            )}
         </div>
       )}
     </div>
