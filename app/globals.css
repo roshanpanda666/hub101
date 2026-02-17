@@ -16,9 +16,15 @@
   --surface-2: #1a1a3e;
   --text-muted: #9ca3af;
   --nav-bg: rgba(10, 10, 26, 0.85);
-  --hero-gradient: radial-gradient(ellipse at 50% 0%, rgba(108,99,255,0.18) 0%, transparent 60%),
-                   radial-gradient(ellipse at 80% 80%, rgba(167,139,250,0.1) 0%, transparent 50%),
-                   radial-gradient(ellipse at 20% 60%, rgba(244,114,182,0.08) 0%, transparent 50%);
+  
+  /* Gradient Colors */
+  --hero-glow-1: rgba(108,99,255,0.18);
+  --hero-glow-2: rgba(167,139,250,0.1);
+  --hero-glow-3: rgba(244,114,182,0.08);
+
+  --hero-gradient: radial-gradient(ellipse at 50% 0%, var(--hero-glow-1) 0%, transparent 60%),
+                   radial-gradient(ellipse at 80% 80%, var(--hero-glow-2) 0%, transparent 50%),
+                   radial-gradient(ellipse at 20% 60%, var(--hero-glow-3) 0%, transparent 50%);
 }
 
 /* ===== LIGHT THEME ===== */
@@ -34,9 +40,15 @@
   --surface-2: #e0e0f0;
   --text-muted: #6b7280;
   --nav-bg: rgba(245, 245, 255, 0.88);
-  --hero-gradient: radial-gradient(ellipse at 50% 0%, rgba(108,99,255,0.1) 0%, transparent 60%),
-                   radial-gradient(ellipse at 80% 80%, rgba(167,139,250,0.08) 0%, transparent 50%),
-                   radial-gradient(ellipse at 20% 60%, rgba(244,114,182,0.06) 0%, transparent 50%);
+  
+  /* Gradient Colors */
+  --hero-glow-1: rgba(108,99,255,0.1);
+  --hero-glow-2: rgba(167,139,250,0.08);
+  --hero-glow-3: rgba(244,114,182,0.06);
+
+  --hero-gradient: radial-gradient(ellipse at 50% 0%, var(--hero-glow-1) 0%, transparent 60%),
+                   radial-gradient(ellipse at 80% 80%, var(--hero-glow-2) 0%, transparent 50%),
+                   radial-gradient(ellipse at 20% 60%, var(--hero-glow-3) 0%, transparent 50%);
 }
 
 @theme inline {

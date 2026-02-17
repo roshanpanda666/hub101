@@ -505,6 +505,10 @@ export default function AdminPage() {
                             { label: "Surface 1", key: "--surface-1", def: "#111128" },
                             { label: "Surface 2", key: "--surface-2", def: "#1a1a3e" },
                             { label: "Text Muted", key: "--text-muted", def: "#9ca3af" },
+                            { label: "Navbar BG", key: "--nav-bg", def: "rgba(10, 10, 26, 0.85)" },
+                            { label: "Hero Glow 1 (Top)", key: "--hero-glow-1", def: "rgba(108,99,255,0.18)" },
+                            { label: "Hero Glow 2 (Btm R)", key: "--hero-glow-2", def: "rgba(167,139,250,0.1)" },
+                            { label: "Hero Glow 3 (Btm L)", key: "--hero-glow-3", def: "rgba(244,114,182,0.08)" },
                         ].map((item) => (
                             <div key={item.key}>
                                 <label style={{ display: "block", fontSize: 13, fontWeight: 600, marginBottom: 8 }}>{item.label}</label>
