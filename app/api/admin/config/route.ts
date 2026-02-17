@@ -68,6 +68,13 @@ export async function POST(req: NextRequest) {
             { upsert: true, new: true, setDefaultsOnInsert: true }
         );
 
+        // Revalidate to ensure changes (like theme or app name) are reflected immediately
+        // especially for the RootLayout and public pages
+        if (key === "theme_config" || key === "site_identity") {
+            const { revalidatePath } = await import("next/cache");
+            revalidatePath("/", "layout");
+        }
+
         return NextResponse.json({ success: true, config });
     } catch (error) {
         console.error(error);
