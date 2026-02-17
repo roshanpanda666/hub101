@@ -31,6 +31,7 @@ interface Exam {
     semester: number;
     branch: string;
     type: string;
+    createdBy?: { name: string; role: string } | string;
 }
 
 interface Routine {
@@ -47,7 +48,7 @@ interface User {
 }
 
 export default function AdminPage() {
-  const [activeTab, setActiveTab] = useState<"pending" | "approved" | "announcements" | "exams" | "routines" | "users" | "config" | "theme">("pending");
+  const [activeTab, setActiveTab] = useState<"pending" | "approved" | "announcements" | "exams" | "routines" | "users" | "config" | "theme" | "content">("pending");
   
   const [pending, setPending] = useState<PendingResource[]>([]);
   const [approved, setApproved] = useState<PendingResource[]>([]);
@@ -60,6 +61,14 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true);
   const [savingConfig, setSavingConfig] = useState(false);
   const [themeConfig, setThemeConfig] = useState<any>({});
+  
+  // CMS State
+  const [siteIdentity, setSiteIdentity] = useState({ name: "CPGS Hub", logoUrl: "", faviconUrl: "" });
+  const [homeContent, setHomeContent] = useState({ 
+    hero: { title: "Your CPGS Hub", subtitle: "One stop for syllabi, exam schedules, PYQs, routines, and an AI-powered academic assistant." },
+    features: [] as any[] 
+  });
+  const [adminMessage, setAdminMessage] = useState({ text: "", authorName: "", authorRole: "", updatedAt: "" });
 
   useEffect(() => {
     fetchData();
@@ -101,6 +110,21 @@ export default function AdminPage() {
             if (res.ok) {
                 const data = await res.json();
                 setThemeConfig(data.value ? JSON.parse(data.value) : {});
+            }
+        } else if (activeTab === "content") {
+            // Fetch all 3 configs
+            const keys = ["site_identity", "home_content", "admin_message"];
+            for (const key of keys) {
+                const res = await fetch(`/api/admin/config?key=${key}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.value) {
+                         const parsed = JSON.parse(data.value);
+                         if (key === "site_identity") setSiteIdentity(prev => ({ ...prev, ...parsed }));
+                         if (key === "home_content") setHomeContent(prev => ({ ...prev, ...parsed }));
+                         if (key === "admin_message") setAdminMessage(parsed);
+                    }
+                }
             }
         }
     } catch (err) {
@@ -229,6 +253,31 @@ export default function AdminPage() {
     }
   }
 
+  async function handleSaveContent(key: string, value: any) {
+    setSavingConfig(true);
+    try {
+        const res = await fetch("/api/admin/config", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ key, value: JSON.stringify(value) })
+        });
+        if (res.ok) {
+            alert("Content saved!");
+            if (key === "admin_message" && value.text === "") {
+                 setAdminMessage({ text: "", authorName: "", authorRole: "", updatedAt: "" });
+            } else if (key === "admin_message") {
+                 // Refresh to get author info
+                 fetchData();
+            }
+        }
+        else alert("Failed to save content");
+    } catch {
+        alert("Error saving content");
+    } finally {
+        setSavingConfig(false);
+    }
+  }
+
   return (
     <div style={{ maxWidth: 1000, margin: "0 auto", padding: "40px 24px" }}>
       <div className="animate-in" style={{ marginBottom: 32 }}>
@@ -246,7 +295,8 @@ export default function AdminPage() {
             { id: "routines", label: "📅 Routines" },
             { id: "users", label: "👥 Users" },
             { id: "config", label: "🤖 AI Brain" },
-            { id: "theme", label: "🎨 Interface" }
+            { id: "theme", label: "🎨 Interface" },
+            { id: "content", label: "✍️ Content"}
         ].map(tab => (
             <button
                 key={tab.id}
@@ -336,6 +386,11 @@ export default function AdminPage() {
                             <div>
                                 <div style={{ fontWeight: 700 }}>{e.subject}</div>
                                 <div style={{ fontSize: 13, color: "var(--text-muted)" }}>{new Date(e.date).toLocaleDateString()} • {e.branch} • Sem {e.semester}</div>
+                                {e.createdBy && typeof e.createdBy === 'object' && (
+                                    <div style={{ fontSize: 12, color: "var(--accent)", marginTop: 4 }}>
+                                        Added by: {e.createdBy.name} ({e.createdBy.role})
+                                    </div>
+                                )}
                             </div>
                             <button onClick={() => handleDeleteExam(e._id)} className="btn-danger" style={{ padding: "6px 12px" }}>Delete</button>
                         </div>
@@ -485,6 +540,107 @@ export default function AdminPage() {
                         >
                             {savingConfig ? "Saving..." : "Save Changes"}
                         </button>
+                    </div>
+                </div>
+            )}
+
+            {/* CMS Content Tab */}
+            {activeTab === "content" && (
+                <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+                    
+                    {/* Branding Section */}
+                    <div className="glass-card animate-in" style={{ padding: 24 }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
+                            <h3 style={{ fontSize: 18, fontWeight: 700 }}>📢 Branding & Identity</h3>
+                            <button onClick={() => handleSaveContent("site_identity", siteIdentity)} disabled={savingConfig} className="btn-primary">Save Branding</button>
+                        </div>
+                        <div style={{ display: "grid", gap: 16, gridTemplateColumns: "1fr 1fr" }}>
+                             <div>
+                                <label style={{ display: "block", marginBottom: 6, fontWeight: 600, fontSize: 13 }}>App Name</label>
+                                <input 
+                                    type="text" 
+                                    value={siteIdentity.name} 
+                                    onChange={(e) => setSiteIdentity({...siteIdentity, name: e.target.value})}
+                                    className="input-field"
+                                />
+                             </div>
+                             <div>
+                                <label style={{ display: "block", marginBottom: 6, fontWeight: 600, fontSize: 13 }}>Logo URL</label>
+                                <input 
+                                    type="text" 
+                                    value={siteIdentity.logoUrl} 
+                                    onChange={(e) => setSiteIdentity({...siteIdentity, logoUrl: e.target.value})}
+                                    className="input-field"
+                                    placeholder="https://..."
+                                />
+                             </div>
+                             <div style={{ gridColumn: "span 2" }}>
+                                <label style={{ display: "block", marginBottom: 6, fontWeight: 600, fontSize: 13 }}>Favicon URL</label>
+                                <input 
+                                    type="text" 
+                                    value={siteIdentity.faviconUrl} 
+                                    onChange={(e) => setSiteIdentity({...siteIdentity, faviconUrl: e.target.value})}
+                                    className="input-field"
+                                    placeholder="https://..."
+                                />
+                             </div>
+                        </div>
+                    </div>
+
+                    {/* Home Page Content */}
+                    <div className="glass-card animate-in" style={{ padding: 24, animationDelay: "0.1s" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
+                            <h3 style={{ fontSize: 18, fontWeight: 700 }}>🏠 Home Page Content</h3>
+                            <button onClick={() => handleSaveContent("home_content", homeContent)} disabled={savingConfig} className="btn-primary">Save Content</button>
+                        </div>
+                        <div style={{ display: "grid", gap: 16 }}>
+                             <div>
+                                <label style={{ display: "block", marginBottom: 6, fontWeight: 600, fontSize: 13 }}>Hero Title</label>
+                                <input 
+                                    type="text" 
+                                    value={homeContent.hero.title} 
+                                    onChange={(e) => setHomeContent({...homeContent, hero: { ...homeContent.hero, title: e.target.value }})}
+                                    className="input-field"
+                                />
+                             </div>
+                             <div>
+                                <label style={{ display: "block", marginBottom: 6, fontWeight: 600, fontSize: 13 }}>Hero Subtitle</label>
+                                <textarea 
+                                    value={homeContent.hero.subtitle} 
+                                    onChange={(e) => setHomeContent({...homeContent, hero: { ...homeContent.hero, subtitle: e.target.value }})}
+                                    className="input-field"
+                                    rows={3}
+                                />
+                             </div>
+                        </div>
+                    </div>
+
+                     {/* Admin Message */}
+                     <div className="glass-card animate-in" style={{ padding: 24, animationDelay: "0.2s" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
+                            <div>
+                                <h3 style={{ fontSize: 18, fontWeight: 700 }}>💬 Message from Admin</h3>
+                                <p style={{ fontSize: 13, color: "var(--text-muted)" }}>This message will appear prominently on the home page.</p>
+                            </div>
+                            <div style={{ display: "flex", gap: 8 }}>
+                                <button onClick={() => handleSaveContent("admin_message", { text: "" })} disabled={savingConfig} className="btn-ghost" style={{ color: "#ef4444" }}>Clear Message</button>
+                                <button onClick={() => handleSaveContent("admin_message", adminMessage)} disabled={savingConfig} className="btn-primary">Post Message</button>
+                            </div>
+                        </div>
+                        
+                        <textarea 
+                            value={adminMessage.text} 
+                            onChange={(e) => setAdminMessage({...adminMessage, text: e.target.value})}
+                            className="input-field"
+                            rows={4}
+                            placeholder="Write an announcement or welcome message..."
+                        />
+                        
+                        {adminMessage.updatedAt && (
+                            <div style={{ marginTop: 12, fontSize: 12, color: "var(--text-muted)", fontStyle: "italic" }}>
+                                Last updated by <strong>{adminMessage.authorName}</strong> ({adminMessage.authorRole}) on {new Date(adminMessage.updatedAt).toLocaleString()}
+                            </div>
+                        )}
                     </div>
                 </div>
             )}

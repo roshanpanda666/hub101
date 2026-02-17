@@ -30,7 +30,7 @@ const ExamSchema = new Schema<IExam>(
         venue: { type: String },
         isNotice: { type: Boolean, default: false },
         imageUrl: { type: String },
-        createdBy: { type: String }, // Store User ID
+        createdBy: { type: Schema.Types.ObjectId, ref: "User" }, // Store User ID
     },
     { timestamps: true }
 );

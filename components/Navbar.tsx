@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTheme } from "@/context/ThemeContext";
 import { useAuth } from "@/context/AuthContext";
 
@@ -21,6 +21,23 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
   const { user, logout } = useAuth();
+  
+  const [identity, setIdentity] = useState({ name: "CPGS Hub", logoUrl: "/logo.png" });
+
+  useEffect(() => {
+    fetch("/api/admin/config?key=site_identity")
+      .then(res => res.json())
+      .then(data => {
+        if (data.value) {
+            const parsed = JSON.parse(data.value);
+            setIdentity({
+                name: parsed.name || "CPGS Hub",
+                logoUrl: parsed.logoUrl || "/logo.png"
+            });
+        }
+      })
+      .catch(err => console.error("Failed to fetch identity", err));
+  }, []);
 
   return (
     <nav style={{ position: "sticky", top: 0, zIndex: 50, background: "var(--nav-bg)", backdropFilter: "blur(20px)", borderBottom: "1px solid var(--card-border)", transition: "background 0.3s ease" }}>
@@ -28,17 +45,15 @@ export default function Navbar() {
         {/* Logo */}
         <Link href="/" style={{ display: "flex", alignItems: "center", gap: 12, textDecoration: "none" }}>
           <div style={{ width: 45, height: 45, display: "flex", alignItems: "center", justifyContent: "center" }}>
-             <img src="/logo.png" alt="CPGS Hub Logo" style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }} />
+             <img src={identity.logoUrl} alt="Logo" style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }} />
           </div>
-          <span className="gradient-text" style={{ fontSize: 22, fontWeight: 700, letterSpacing: "-0.5px" }}>CPGS Hub</span>
+          <span className="gradient-text" style={{ fontSize: 22, fontWeight: 700, letterSpacing: "-0.5px" }}>{identity.name}</span>
         </Link>
 
         {/* Desktop Links */}
-        <div style={{ display: "flex", gap: 2, alignItems: "center" }} className="nav-desktop">
+        <div className="nav-desktop" style={{ display: "flex", gap: 8, alignItems: "center" }}>
           {navLinks.map((link) => (
-            <Link key={link.href} href={link.href} style={{ padding: "8px 12px", borderRadius: 10, color: "var(--text-muted)", textDecoration: "none", fontSize: 13, fontWeight: 500, transition: "all 0.2s ease", display: "flex", alignItems: "center", gap: 5 }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(108,99,255,0.12)"; e.currentTarget.style.color = "var(--accent-light)"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--text-muted)"; }}>
+            <Link key={link.href} href={link.href} className="nav-link" style={{ padding: "8px 12px", borderRadius: 10, color: "var(--text-muted)", textDecoration: "none", fontSize: 13, fontWeight: 500, transition: "all 0.2s ease", display: "flex", alignItems: "center", gap: 5 }}>
               <span>{link.icon}</span>{link.label}
             </Link>
           ))}
@@ -60,7 +75,7 @@ export default function Navbar() {
         </div>
 
         {/* Hamburger */}
-        <div style={{ display: "none" }} className="nav-hamburger">
+        <div className="nav-hamburger" style={{ display: "none" }}>
           <button onClick={toggleTheme} style={{ background: "transparent", border: "none", cursor: "pointer", fontSize: 20, marginRight: 8 }} aria-label="Toggle theme">
             {theme === "dark" ? "☀️" : "🌙"}
           </button>
@@ -92,6 +107,10 @@ export default function Navbar() {
       )}
 
       <style jsx>{`
+        .nav-link:hover {
+            background: rgba(108,99,255,0.12) !important;
+            color: var(--accent-light) !important;
+        }
         @media (max-width: 900px) {
           .nav-desktop { display: none !important; }
           .nav-hamburger { display: flex !important; align-items: center; }
