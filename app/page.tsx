@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 const branches = [
   { code: "CSA", name: "Computer Science & Application", icon: "💻", color: "#6c63ff" },
   { code: "ABM", name: "Agri-Business Management", icon: "🌾", color: "#10b981" },
-  { code: "Bio Informatics", name: "Bio Informatics", icon: "📊", color: "#f59e0b" },
+  { code: "BI", name: "Bio Informatics", icon: "🧬", color: "#f59e0b" },
 ];
 
 export default function HomePage() {
