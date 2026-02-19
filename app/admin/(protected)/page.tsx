@@ -5,6 +5,185 @@ import { getPendingResources, getResources, approveResource, deleteResource } fr
 import { getExams, deleteExam } from "@/actions/exams";
 import { getAllRoutines, deleteRoutine } from "@/actions/routines";
 
+// --- Theme Presets ---
+const THEME_PRESETS: Record<string, { label: string; colors: Record<string, string> }> = {
+  default: {
+    label: "🌌 Nebula (Default)",
+    colors: {} // Reset to CSS defaults
+  },
+  vercel: {
+    label: "▲ Vercel (Dark)",
+    colors: {
+      "--background": "#000000",
+      "--foreground": "#ffffff",
+      "--card-bg": "rgba(10, 10, 10, 0.8)",
+      "--card-border": "#333333",
+      "--accent": "#ffffff",
+      "--accent-light": "#ededed",
+      "--accent-glow": "rgba(255, 255, 255, 0.15)",
+      "--surface-1": "#111111",
+      "--surface-2": "#222222",
+      "--text-muted": "#888888",
+      "--nav-bg": "rgba(0, 0, 0, 0.8)",
+      "--hero-glow-1": "transparent",
+      "--hero-glow-2": "transparent",
+      "--hero-glow-3": "transparent"
+    }
+  },
+  twitter: {
+    label: "🐦 Twitter (Dim)",
+    colors: {
+        "--background": "#15202b",
+        "--foreground": "#ffffff",
+        "--card-bg": "rgba(25, 39, 52, 0.8)",
+        "--card-border": "#38444d",
+        "--accent": "#1d9bf0",
+        "--accent-light": "#8ecdf8",
+        "--accent-glow": "rgba(29, 155, 240, 0.3)",
+        "--surface-1": "#192734",
+        "--surface-2": "#22303c",
+        "--text-muted": "#8899a6",
+        "--nav-bg": "rgba(21, 32, 43, 0.9)",
+        "--hero-glow-1": "rgba(29, 155, 240, 0.1)",
+        "--hero-glow-2": "transparent",
+        "--hero-glow-3": "transparent"
+    }
+  },
+  nature: {
+    label: "🌿 Nature (Green)",
+    colors: {
+        "--background": "#051a10",
+        "--foreground": "#e0f2e9",
+        "--card-bg": "rgba(10, 40, 25, 0.8)",
+        "--card-border": "rgba(40, 167, 69, 0.3)",
+        "--accent": "#28a745",
+        "--accent-light": "#5ddc79",
+        "--accent-glow": "rgba(40, 167, 69, 0.4)",
+        "--surface-1": "#0b2618",
+        "--surface-2": "#143d26",
+        "--text-muted": "#82a090",
+        "--nav-bg": "rgba(5, 26, 16, 0.85)",
+        "--hero-glow-1": "rgba(40, 167, 69, 0.2)",
+        "--hero-glow-2": "rgba(93, 220, 121, 0.1)",
+        "--hero-glow-3": "rgba(20, 80, 50, 0.3)"
+    }
+  },
+  orange: {
+    label: "🍊 Sunset (Orange)",
+    colors: {
+        "--background": "#1a0f0a",
+        "--foreground": "#ffe8e0",
+        "--card-bg": "rgba(40, 20, 10, 0.8)",
+        "--card-border": "rgba(255, 100, 0, 0.3)",
+        "--accent": "#ff6b00",
+        "--accent-light": "#ff9e4d",
+        "--accent-glow": "rgba(255, 107, 0, 0.4)",
+        "--surface-1": "#2b160c",
+        "--surface-2": "#3d2012",
+        "--text-muted": "#a08070",
+        "--nav-bg": "rgba(26, 15, 10, 0.85)",
+        "--hero-glow-1": "rgba(255, 107, 0, 0.2)",
+        "--hero-glow-2": "rgba(255, 60, 0, 0.1)",
+        "--hero-glow-3": "rgba(255, 160, 0, 0.1)"
+    }
+  },
+  purple: {
+      label: "🔮 Amethyst (Purple)",
+      colors: {
+          "--background": "#120a21",
+          "--foreground": "#eaddff",
+          "--card-bg": "rgba(35, 20, 60, 0.8)",
+          "--card-border": "rgba(140, 80, 255, 0.3)",
+          "--accent": "#9d4edd",
+          "--accent-light": "#ccc2ff",
+          "--accent-glow": "rgba(157, 78, 221, 0.4)",
+          "--surface-1": "#1f1136",
+          "--surface-2": "#2e1a50",
+          "--text-muted": "#9d8caf",
+          "--nav-bg": "rgba(18, 10, 33, 0.85)",
+          "--hero-glow-1": "rgba(157, 78, 221, 0.25)",
+          "--hero-glow-2": "rgba(100, 50, 200, 0.15)",
+          "--hero-glow-3": "rgba(200, 100, 255, 0.1)"
+      }
+  },
+  crimson: {
+      label: "🔴 Crimson (Red)",
+      colors: {
+          "--background": "#1a0505",
+          "--foreground": "#ffe0e0",
+          "--card-bg": "rgba(40, 10, 10, 0.8)",
+          "--card-border": "rgba(220, 38, 38, 0.3)",
+          "--accent": "#dc2626",
+          "--accent-light": "#ff6b6b",
+          "--accent-glow": "rgba(220, 38, 38, 0.4)",
+          "--surface-1": "#2b0a0a",
+          "--surface-2": "#3d1010",
+          "--text-muted": "#bc8c8c",
+          "--nav-bg": "rgba(26, 5, 5, 0.85)",
+          "--hero-glow-1": "rgba(220, 38, 38, 0.25)",
+          "--hero-glow-2": "rgba(255, 80, 80, 0.15)",
+          "--hero-glow-3": "rgba(180, 20, 20, 0.1)"
+      }
+  },
+  cyber: {
+      label: "⚡ Cyber (Teal)",
+      colors: {
+          "--background": "#021214",
+          "--foreground": "#e0faff",
+          "--card-bg": "rgba(5, 35, 40, 0.8)",
+          "--card-border": "rgba(6, 182, 212, 0.3)",
+          "--accent": "#06b6d4",
+          "--accent-light": "#67e8f9",
+          "--accent-glow": "rgba(6, 182, 212, 0.45)",
+          "--surface-1": "#082024",
+          "--surface-2": "#0e2e33",
+          "--text-muted": "#709096",
+          "--nav-bg": "rgba(2, 18, 20, 0.85)",
+          "--hero-glow-1": "rgba(6, 182, 212, 0.25)",
+          "--hero-glow-2": "rgba(34, 211, 238, 0.15)",
+          "--hero-glow-3": "rgba(8, 145, 178, 0.1)"
+      }
+  },
+  coffee: {
+      label: "☕ Coffee (Sepia)",
+      colors: {
+          "--background": "#1c1917",
+          "--foreground": "#e7e5e4",
+          "--card-bg": "rgba(35, 30, 28, 0.8)",
+          "--card-border": "rgba(168, 162, 158, 0.2)",
+          "--accent": "#d6d3d1",
+          "--accent-light": "#f5f5f4",
+          "--accent-glow": "rgba(214, 211, 209, 0.2)",
+          "--surface-1": "#292524",
+          "--surface-2": "#44403c",
+          "--text-muted": "#a8a29e",
+          "--nav-bg": "rgba(28, 25, 23, 0.85)",
+          "--hero-glow-1": "rgba(168, 162, 158, 0.1)",
+          "--hero-glow-2": "rgba(120, 113, 108, 0.1)",
+          "--hero-glow-3": "rgba(87, 83, 78, 0.1)"
+      }
+  },
+  midnight: {
+      label: "🌙 Midnight (Deep Blue)",
+      colors: {
+          "--background": "#020410",
+          "--foreground": "#e0e7ff",
+          "--card-bg": "rgba(10, 15, 35, 0.8)",
+          "--card-border": "rgba(79, 70, 229, 0.3)",
+          "--accent": "#4f46e5",
+          "--accent-light": "#818cf8",
+          "--accent-glow": "rgba(79, 70, 229, 0.4)",
+          "--surface-1": "#0f1629",
+          "--surface-2": "#1e293b",
+          "--text-muted": "#94a3b8",
+          "--nav-bg": "rgba(2, 4, 16, 0.85)",
+          "--hero-glow-1": "rgba(79, 70, 229, 0.25)",
+          "--hero-glow-2": "rgba(99, 102, 241, 0.15)",
+          "--hero-glow-3": "rgba(67, 56, 202, 0.1)"
+      }
+  }
+};
+
 interface PendingResource {
   _id: string;
   type: string;
@@ -232,9 +411,6 @@ export default function AdminPage() {
     if(!confirm("Reset to default theme?")) return;
     setSavingConfig(true);
     try {
-        // We can just save an empty object or null, effectively clearing overrides
-        // But simpler to just delete? Our API uses POST/upsert. 
-        // Let's just save empty object.
         const res = await fetch("/api/admin/config", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -251,6 +427,14 @@ export default function AdminPage() {
     } finally {
         setSavingConfig(false);
     }
+  }
+
+  function applyPreset(key: string) {
+      if (key === "default") {
+          setThemeConfig({}); // Clear overrides
+      } else {
+          setThemeConfig(THEME_PRESETS[key].colors);
+      }
   }
 
   async function handleSaveContent(key: string, value: any) {
@@ -494,6 +678,37 @@ export default function AdminPage() {
                         <button onClick={handleResetTheme} className="btn-ghost" style={{ color: "#ef4444" }}>Reset to Default</button>
                     </div>
 
+                    {/* Presets Grid */}
+                    <div style={{ marginBottom: 32 }}>
+                        <h4 style={{ fontSize: 14, fontWeight: 600, marginBottom: 12, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: 0.5 }}>Quick Presets</h4>
+                        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))", gap: 12 }}>
+                            {Object.entries(THEME_PRESETS).map(([key, preset]) => (
+                                <button
+                                    key={key}
+                                    onClick={() => applyPreset(key)}
+                                    className="glass-card"
+                                    style={{
+                                        padding: 12,
+                                        textAlign: "left",
+                                        cursor: "pointer",
+                                        border: "1px solid var(--card-border)",
+                                        background: "rgba(255,255,255,0.03)",
+                                        transition: "all 0.2s ease"
+                                    }}
+                                >
+                                    <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 4 }}>{preset.label}</div>
+                                    <div style={{ display: "flex", gap: 4 }}>
+                                        {/* Color Dots */}
+                                        <div style={{ width: 12, height: 12, borderRadius: "50%", background: preset.colors["--background"] || "#0a0a1a", border: "1px solid rgba(255,255,255,0.2)" }} />
+                                        <div style={{ width: 12, height: 12, borderRadius: "50%", background: preset.colors["--accent"] || "#6c63ff" }} />
+                                        <div style={{ width: 12, height: 12, borderRadius: "50%", background: preset.colors["--surface-1"] || "#111128" }} />
+                                    </div>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <h4 style={{ fontSize: 14, fontWeight: 600, marginBottom: 12, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: 0.5 }}>Custom Colors</h4>
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 20 }}>
                         {[
                             { label: "Background", key: "--background", def: "#0a0a1a" },
@@ -502,13 +717,14 @@ export default function AdminPage() {
                             { label: "Card Border", key: "--card-border", def: "rgba(100, 100, 255, 0.15)" },
                             { label: "Accent Color", key: "--accent", def: "#6c63ff" },
                             { label: "Accent Light", key: "--accent-light", def: "#8b83ff" },
+                            { label: "Accent Glow", key: "--accent-glow", def: "rgba(108, 99, 255, 0.3)" },
                             { label: "Surface 1", key: "--surface-1", def: "#111128" },
                             { label: "Surface 2", key: "--surface-2", def: "#1a1a3e" },
                             { label: "Text Muted", key: "--text-muted", def: "#9ca3af" },
                             { label: "Navbar BG", key: "--nav-bg", def: "rgba(10, 10, 26, 0.85)" },
-                            { label: "Hero Glow 1 (Top)", key: "--hero-glow-1", def: "rgba(108,99,255,0.18)" },
-                            { label: "Hero Glow 2 (Btm R)", key: "--hero-glow-2", def: "rgba(167,139,250,0.1)" },
-                            { label: "Hero Glow 3 (Btm L)", key: "--hero-glow-3", def: "rgba(244,114,182,0.08)" },
+                            { label: "Hero Glow 1", key: "--hero-glow-1", def: "rgba(108,99,255,0.18)" },
+                            { label: "Hero Glow 2", key: "--hero-glow-2", def: "rgba(167,139,250,0.1)" },
+                            { label: "Hero Glow 3", key: "--hero-glow-3", def: "rgba(244,114,182,0.08)" },
                         ].map((item) => (
                             <div key={item.key}>
                                 <label style={{ display: "block", fontSize: 13, fontWeight: 600, marginBottom: 8 }}>{item.label}</label>
