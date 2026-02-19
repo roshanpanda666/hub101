@@ -11,14 +11,22 @@ export default function RegisterPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isStudent, setIsStudent] = useState(true);
+  const [rollNumber, setRollNumber] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
+    
+    if (isStudent && !rollNumber.trim()) {
+        setError("Roll number is required for students");
+        return;
+    }
+
     setLoading(true);
-    const result = await register(name, email, password);
+    const result = await register(name, email, password, isStudent ? rollNumber : undefined);
     if (result.success) {
       router.push("/");
     } else {
@@ -43,6 +51,46 @@ export default function RegisterPage() {
         style={{ padding: 32, display: "flex", flexDirection: "column", gap: 20, animationDelay: "0.1s" }}
       >
         <div>
+          <label style={{ display: "block", marginBottom: 6, fontWeight: 600, fontSize: 14, color: "var(--foreground)" }}>I am a...</label>
+          <div style={{ display: "flex", gap: 12 }}>
+            <button
+                type="button"
+                onClick={() => setIsStudent(true)}
+                style={{
+                    flex: 1,
+                    padding: "10px",
+                    borderRadius: 8,
+                    border: isStudent ? "2px solid var(--accent)" : "1px solid var(--card-border)",
+                    background: isStudent ? "rgba(108, 99, 255, 0.1)" : "transparent",
+                    color: isStudent ? "var(--accent)" : "var(--text-muted)",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    transition: "all 0.2s"
+                }}
+            >
+                Student
+            </button>
+            <button
+                type="button"
+                onClick={() => setIsStudent(false)}
+                style={{
+                    flex: 1,
+                    padding: "10px",
+                    borderRadius: 8,
+                    border: !isStudent ? "2px solid var(--accent)" : "1px solid var(--card-border)",
+                    background: !isStudent ? "rgba(108, 99, 255, 0.1)" : "transparent",
+                    color: !isStudent ? "var(--accent)" : "var(--text-muted)",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    transition: "all 0.2s"
+                }}
+            >
+                Teacher / Staff
+            </button>
+          </div>
+        </div>
+
+        <div>
           <label style={{ display: "block", marginBottom: 6, fontWeight: 600, fontSize: 14, color: "var(--foreground)" }}>Full Name</label>
           <input type="text" className="input-field" placeholder="Your name" required value={name} onChange={(e) => setName(e.target.value)} />
         </div>
@@ -50,6 +98,14 @@ export default function RegisterPage() {
           <label style={{ display: "block", marginBottom: 6, fontWeight: 600, fontSize: 14, color: "var(--foreground)" }}>Email</label>
           <input type="email" className="input-field" placeholder="you@email.com" required value={email} onChange={(e) => setEmail(e.target.value)} />
         </div>
+        
+        {isStudent && (
+            <div className="animate-in" style={{ animationDuration: "0.3s" }}>
+                <label style={{ display: "block", marginBottom: 6, fontWeight: 600, fontSize: 14, color: "var(--foreground)" }}>Roll Number <span style={{color:"var(--danger)"}}>*</span></label>
+                <input type="text" className="input-field" placeholder="e.g. 210101001" required={isStudent} value={rollNumber} onChange={(e) => setRollNumber(e.target.value)} />
+            </div>
+        )}
+
         <div>
           <label style={{ display: "block", marginBottom: 6, fontWeight: 600, fontSize: 14, color: "var(--foreground)" }}>Password</label>
           <input type="password" className="input-field" placeholder="Min 6 characters" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} />

@@ -8,7 +8,7 @@ const JWT_SECRET = process.env.JWT_SECRET || "fallback-secret";
 
 export async function POST(req: NextRequest) {
     try {
-        const { name, email, password } = await req.json();
+        const { name, email, password, rollNumber } = await req.json();
 
         if (!name || !email || !password) {
             return NextResponse.json({ error: "All fields are required" }, { status: 400 });
@@ -30,6 +30,7 @@ export async function POST(req: NextRequest) {
             name,
             email: email.toLowerCase(),
             password: hashedPassword,
+            rollNumber,
         });
 
         const token = jwt.sign({ userId: user._id.toString() }, JWT_SECRET, { expiresIn: "7d" });

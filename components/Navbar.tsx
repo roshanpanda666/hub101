@@ -65,8 +65,17 @@ export default function Navbar() {
 
           {/* Auth */}
           {user ? (
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginLeft: 8 }}>
-              <span style={{ fontSize: 13, color: "var(--accent-light)", fontWeight: 600 }}>👤 {user.name}</span>
+            <div style={{ display: "flex", alignItems: "center", gap: 12, marginLeft: 8 }}>
+              <Link href="/profile" style={{ display: "flex", alignItems: "center", gap: 8, textDecoration: "none", color: "var(--accent-light)" }}>
+                  {user.profilePicture ? (
+                      <div style={{ width: 32, height: 32, borderRadius: "50%", overflow: "hidden", border: "1px solid var(--card-border)" }}>
+                          <img src={user.profilePicture} alt="Profile" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                      </div>
+                  ) : (
+                      <span style={{ fontSize: 20 }}>👤</span>
+                  )}
+                  <span style={{ fontSize: 13, fontWeight: 600 }}>{user.name}</span>
+              </Link>
               <button onClick={logout} className="btn-ghost" style={{ fontSize: 12, padding: "6px 12px" }}>Logout</button>
             </div>
           ) : (
@@ -96,7 +105,16 @@ export default function Navbar() {
           <div style={{ borderTop: "1px solid var(--card-border)", marginTop: 8, paddingTop: 12 }}>
             {user ? (
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 16px" }}>
-                <span style={{ fontSize: 14, color: "var(--accent-light)", fontWeight: 600 }}>👤 {user.name}</span>
+                <Link href="/profile" onClick={() => setMenuOpen(false)} style={{ fontSize: 14, color: "var(--accent-light)", fontWeight: 600, textDecoration: "none", display: "flex", alignItems: "center", gap: 8 }}>
+                    {user.profilePicture ? (
+                        <div style={{ width: 28, height: 28, borderRadius: "50%", overflow: "hidden" }}>
+                            <img src={user.profilePicture} alt="Profile" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                        </div>
+                    ) : (
+                        <span>👤</span>
+                    )}
+                    {user.name}
+                </Link>
                 <button onClick={() => { logout(); setMenuOpen(false); }} className="btn-ghost" style={{ fontSize: 13, padding: "8px 16px" }}>Logout</button>
               </div>
             ) : (
