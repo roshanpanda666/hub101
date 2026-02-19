@@ -224,6 +224,7 @@ interface User {
     name: string;
     email: string;
     role: string;
+    rollNumber?: string;
 }
 
 export default function AdminPage() {
@@ -606,6 +607,7 @@ export default function AdminPage() {
                              <div>
                                  <div style={{ fontWeight: 700 }}>{u.name}</div>
                                  <div style={{ fontSize: 13, color: "var(--text-muted)" }}>{u.email}</div>
+                                 {u.rollNumber && <div style={{ fontSize: 12, color: "var(--accent)", marginTop: 2 }}>Roll: {u.rollNumber}</div>}
                              </div>
                              <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
                                  <select 
