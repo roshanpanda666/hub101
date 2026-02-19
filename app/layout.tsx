@@ -48,7 +48,10 @@ export default async function RootLayout({
   if (themeConfig) {
       dynamicStyle = `
         :root {
-            ${Object.entries(themeConfig).map(([key, val]) => `${key}: ${val} !important;`).join("\n")}
+            ${Object.entries(themeConfig)
+              .filter(([key]) => key.startsWith("--"))
+              .map(([key, val]) => `${key}: ${val} !important;`)
+              .join("\n")}
         }
       `;
   }

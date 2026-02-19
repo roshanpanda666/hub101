@@ -61,6 +61,17 @@ export async function POST(req: NextRequest) {
             finalValue = JSON.stringify(messageData);
         }
 
+        // If updating theme, append metadata
+        if (key === "theme_config") {
+            const themeData = JSON.parse(value);
+            themeData._metadata = {
+                updatedBy: user.name,
+                role: user.role,
+                updatedAt: new Date().toISOString()
+            };
+            finalValue = JSON.stringify(themeData);
+        }
+
         await dbConnect();
         const config = await SystemConfig.findOneAndUpdate(
             { key },

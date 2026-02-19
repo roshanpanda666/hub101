@@ -678,6 +678,14 @@ export default function AdminPage() {
                         <button onClick={handleResetTheme} className="btn-ghost" style={{ color: "#ef4444" }}>Reset to Default</button>
                     </div>
 
+                    {themeConfig._metadata && (
+                        <div className="glass-card" style={{ marginBottom: 24, padding: "12px 16px", background: "rgba(108, 99, 255, 0.05)", border: "1px solid rgba(108, 99, 255, 0.1)", display: "flex", alignItems: "center", gap: 8 }}>
+                            <span style={{ fontSize: 13, color: "var(--text-muted)" }}>
+                                🎨 Limit updated by <strong>{themeConfig._metadata.updatedBy}</strong> ({themeConfig._metadata.role}) on {new Date(themeConfig._metadata.updatedAt).toLocaleString()}
+                            </span>
+                        </div>
+                    )}
+
                     {/* Presets Grid */}
                     <div style={{ marginBottom: 32 }}>
                         <h4 style={{ fontSize: 14, fontWeight: 600, marginBottom: 12, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: 0.5 }}>Quick Presets</h4>
